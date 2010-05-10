@@ -86,7 +86,7 @@ class XAuthPlugin {
         /* Tell XAuth.org that a user has just signed into Google on this browser. */
         XAuth.extend({
          // Just reveals "someone is logged into Google" but no personally identifiable info.
-          token: "http://notizblog.org/",
+          token: "<?php echo get_option( 'siteurl' ); ?>",
           // Expires after 24 hours or if the user explicitly logs out (24h is arbitrary).
           expire: new Date().getTime() + 60*60*24*1000,
           // Allow any domain to read this info (could also whitelist partner domains only).
