@@ -32,7 +32,11 @@ class XAuthPlugin {
     echo '  }';
     echo '</script>'."\n";
   }
-
+  
+  /**
+   *
+   * 
+   */
   function parseRequest() {
     global $wp_query, $wp;
 
@@ -73,7 +77,12 @@ class XAuthPlugin {
       return get_option( 'siteurl' )."?xauth=login&redirect_to=".urlencode($redirect_to);
     }
   }
-
+  
+  /**
+   *
+   * 
+   * 
+   */
   function loginPage($redirect_to) {
 ?>
 <!DOCTYPE html>
@@ -83,9 +92,7 @@ class XAuthPlugin {
     <script type="text/javascript" src="http://xauth.org/xauth.js"></script>
     <script type="text/javascript">
       function doLogin(doneUrl) {
-        /* Tell XAuth.org that a user has just signed into Google on this browser. */
         XAuth.extend({
-         // Just reveals "someone is logged into Google" but no personally identifiable info.
           token: "<?php echo get_option( 'siteurl' ); ?>",
           // Expires after 24 hours or if the user explicitly logs out (24h is arbitrary).
           expire: new Date().getTime() + 60*60*24*1000,
