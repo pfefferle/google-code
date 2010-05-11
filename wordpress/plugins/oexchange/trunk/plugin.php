@@ -22,6 +22,7 @@ add_action('parse_request', array('OExchangePlugin', 'parseRequest'));
 add_filter('query_vars', array('OExchangePlugin', 'queryVars'));
 add_action('host_meta_xrd', array('OExchangePlugin', 'hostMetaXrd'));
 add_action('webfinger_xrd', array('OExchangePlugin', 'hostMetaXrd'));
+add_action('init', array('OExchangePlugin', 'init'));
 
 /**
  * OExchange class
@@ -39,6 +40,31 @@ class OExchangePlugin {
     $vars[] = 'oexchange';
 
     return $vars;
+  }
+  
+  function init() {
+    $bookmarkletUrl = admin_url('press-this.php');
+    
+    $thisUrl = 'http'.(isset($_SERVER["HTTPS"]) ? $_SERVER["HTTPS"] == 'off' ? '' : 's' : '').
+                    '://'.
+                    $_SERVER['HTTP_HOST'].
+                    $_SERVER['REQUEST_URI'];
+    
+    if (stristr($thislink, $pressthis) === false) {
+      return;
+    }
+    
+    if (isset( $_GET['url'] ))
+      $_GET['u'] = $_GET['url'];
+      
+    if (isset( $_GET['title'] ))
+      $_GET['t'] = $_GET['title'];
+    
+    if (isset( $_GET['description'] ))
+      $_GET['s'] = $_GET['description'];
+      
+    if (isset( $_GET['ctype'] ) && $_GET['ctype'] == "image")
+      $_GET['i'] = $_GET['imageurl'];
   }
   
   function parseRequest() {
@@ -76,7 +102,7 @@ class OExchangePlugin {
 
     $xrd .= '  <Link 
         rel= "http://www.oexchange.org/spec/0.8/rel/offer" 
-        href="'.get_option( 'siteurl' ).'/?oexchange=press-this"
+        href="'.admin_url('press-this.php').'"
         type="text/html" 
         />';
     $xrd .= '</XRD>';
