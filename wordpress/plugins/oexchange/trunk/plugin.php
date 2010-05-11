@@ -63,8 +63,11 @@ class OExchangePlugin {
     if (isset( $_GET['description'] ))
       $_GET['s'] = $_GET['description'];
       
-    if (isset( $_GET['ctype'] ) && $_GET['ctype'] == "image")
-      $_GET['i'] = $_GET['imageurl'];
+    if (isset( $_GET['ctype'] )) {
+      if ($_GET['ctype'] == "image") {
+        $_GET['i'] = $_GET['imageurl'];
+      }
+    }
   }
   
   function parseRequest() {
@@ -73,8 +76,8 @@ class OExchangePlugin {
     if( array_key_exists('oexchange', $wp->query_vars) ) {
       if ($wp->query_vars['oexchange'] == 'xrd') {
         $xrd = OExchangePlugin::createXrd();
-        //header('Content-Type: application/xrd+xml; charset=' . get_option('blog_charset'), true);
-        header('Content-Type: text/xml; charset=' . get_option('blog_charset'), true);
+        header('Content-Type: application/xrd+xml; charset=' . get_option('blog_charset'), true);
+        //header('Content-Type: text/xml; charset=' . get_option('blog_charset'), true);
         echo $xrd;
         exit;
       }
