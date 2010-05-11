@@ -50,7 +50,7 @@ class OExchangePlugin {
                     $_SERVER['HTTP_HOST'].
                     $_SERVER['REQUEST_URI'];
     
-    if (stristr($thislink, $pressthis) === false) {
+    if (stristr($thisUrl, $bookmarkletUrl) === false) {
       return;
     }
     
