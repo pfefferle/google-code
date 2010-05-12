@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: Account Manager
-Plugin URI: http://notizblog.org/projects/apml-for-wordpress/
-Description: 
+Plugin URI: http://notizblog.org/
+Description: Mozillas Account Manager for WordPress
 Version: 0.1
 Author: Matthias Pfefferle
 Author URI: http://notizblog.org/
@@ -22,7 +22,16 @@ if ( ! defined( 'WP_PLUGIN_URL' ) )
 if ( ! defined( 'WP_PLUGIN_DIR' ) )
     define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 
+/**
+ *
+ * @author Matthias Pfefferle
+ */
 class MozillaAccountManager {
+
+  /**
+   *
+   * 
+   */
   function init(){
     global $current_user;
     global $user_ID;
