@@ -2,7 +2,7 @@
 /*
 Plugin Name: XAuth
 Plugin URI: http://wordpress.org/extend/plugins/xauth/
-Description: Tell other sites that you are a &lt;your-blogs-name&gt; - user
+Description: Tell other sites that you are a &lt;your-blogs-name&gt; - user through XAuth
 Version: 0.13
 Author: Matthias Pfefferle
 Author URI: http://notizblog.org/
@@ -34,8 +34,9 @@ class XAuthPlugin {
   }
 
   /**
+   * parse the request to show the XAuth loginPage()
    *
-   *
+   * @see loginPage()
    */
   function parseRequest() {
     global $wp_query, $wp;
@@ -50,7 +51,7 @@ class XAuthPlugin {
   }
 
   /**
-   * adds "xauth" as query-var
+   * adds "xauth" and "redirect_to" as query-var
    *
    * @param array $vars
    * @return array
@@ -63,7 +64,9 @@ class XAuthPlugin {
   }
 
   /**
+   * redirects the user. this runs after loginPage()
    *
+   * @see loginPage()
    * @param string $redirect_to
    * @param string $requested_redirect_to
    * @param ???? $user
@@ -79,9 +82,7 @@ class XAuthPlugin {
   }
 
   /**
-   *
-   *
-   *
+   * an intermediate step to run the XAuth extender
    */
   function loginPage($redirect_to) {
 ?>
