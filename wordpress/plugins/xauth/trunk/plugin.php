@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: XAuth
-Plugin URI: http://notizblog.org/
+Plugin URI: http://wordpress.org/extend/plugins/xauth/
 Description: Tell other sites that you are a &lt;your-blogs-name&gt; - user
-Version: 0.1
+Version: 0.13
 Author: Matthias Pfefferle
 Author URI: http://notizblog.org/
 */
@@ -32,10 +32,10 @@ class XAuthPlugin {
     echo '  }';
     echo '</script>'."\n";
   }
-  
+
   /**
    *
-   * 
+   *
    */
   function parseRequest() {
     global $wp_query, $wp;
@@ -77,11 +77,11 @@ class XAuthPlugin {
       return get_option( 'siteurl' )."?xauth=login&redirect_to=".urlencode($redirect_to);
     }
   }
-  
+
   /**
    *
-   * 
-   * 
+   *
+   *
    */
   function loginPage($redirect_to) {
 ?>
@@ -94,11 +94,8 @@ class XAuthPlugin {
       function doLogin(doneUrl) {
         XAuth.extend({
           token: "<?php echo get_option( 'siteurl' ); ?>",
-          // Expires after 24 hours or if the user explicitly logs out (24h is arbitrary).
           expire: new Date().getTime() + 60*60*24*1000,
-          // Allow any domain to read this info (could also whitelist partner domains only).
           extend: ["*"],
-          // Optional callback function once extend() has completed.
           callback: makeRedirectFunc(doneUrl)
         });
       }
