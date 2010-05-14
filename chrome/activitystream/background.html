@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+  console.log("jiha");
+
+  chrome.extension.onRequest.addListener(function(request, sender) {
+  	console.log("disch");
+    if (request.msg == "activityIcon") {
+      // We have received a list of feed urls found on the page.
+      // Enable the page action icon.
+
+      console.log(request.feeds);
+
+      chrome.pageAction.show(sender.tab.id);
+    }
+  });
+</script>
+</head>
+</html>
