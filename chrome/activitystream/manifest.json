@@ -1,6 +1,6 @@
 {
   "name": "ActivityStream",
-  "version": "0.14",
+  "version": "0.17",
   "description": "View ActivityStreams...",
   "page_action": {
     "default_icon": "img/as-b-16x16.png",
