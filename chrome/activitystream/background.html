@@ -2,17 +2,20 @@
 <html>
 <head>
 <script>
-  console.log("jiha");
+  var activityFeeds = {};
 
   chrome.extension.onRequest.addListener(function(request, sender) {
-  	console.log("disch");
+    var tabId = sender.tab.id;
+
     if (request.msg == "activityIcon") {
+      // add feeds to global var
+      activityFeeds[tabId] = request.feeds;
+      
+      console.log(activityFeeds);
+      
       // We have received a list of feed urls found on the page.
       // Enable the page action icon.
-
-      console.log(request.feeds);
-
-      chrome.pageAction.show(sender.tab.id);
+      chrome.pageAction.show(tabId);
     }
   });
 </script>

@@ -1,50 +1,76 @@
-<style>
-body {
-  min-width:357px;
-  overflow-x:hidden;
-}
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+	    margin: 15px;
+	    padding: 0;
+	    width: 420px;
+	    font-family: Helvetica, sans-serif;
+	    color: #3b3b3b;
+	    overflow-x: hidden;
+	  }
 
-img {
-  margin:5px;
-  border:2px solid black;
-  vertical-align:middle;
-  width:75px;
-  height:75px;
-}
-</style>
+	  #header {
+	    overflow: hidden;
+	  }
 
-<script>
-var req = new XMLHttpRequest();
-req.open(
-    "GET",
-    "http://api.flickr.com/services/rest/?" +
-        "method=flickr.photos.search&" +
-        "api_key=90485e931f687a9b9c2a66bf58a3861a&" +
-        "text=hello%20world&" +
-        "safe_search=1&" +  // 1 is "safe"
-        "content_type=1&" +  // 1 is "photos only"
-        "sort=relevance&" +  // another good one is "interestingness-desc"
-        "per_page=20",
-    true);
-req.onload = showPhotos;
-req.send(null);
+	  #icon {
+	    display: block;
+	    float: left;
+	  }
 
-function showPhotos() {
-  var photos = req.responseXML.getElementsByTagName("photo");
-
-  for (var i = 0, photo; photo = photos[i]; i++) {
-    var img = document.createElement("image");
-    img.src = constructImageURL(photo);
-    document.body.appendChild(img);
-  }
-}
-
-// See: http://www.flickr.com/services/api/misc.urls.html
-function constructImageURL(photo) {
-  return "http://farm" + photo.getAttribute("farm") +
-      ".static.flickr.com/" + photo.getAttribute("server") +
-      "/" + photo.getAttribute("id") +
-      "_" + photo.getAttribute("secret") +
-      "_s.jpg";
-}
-</script>
+	  #header h1 {
+	    color: #43b4de;
+	    font-size: 19px;
+	    padding-top: 0px;
+	    margin-top: 0px;
+	  }
+	  
+		li {
+		  list-style-type: none;
+		  padding-left: 20px;
+		  background: transparent url(img/as-b-16x16.png) no-repeat;
+		}
+		
+		ul {
+		  margin: 0px;
+		  padding: 0px;
+		}
+  </style>
+  <script>
+    chrome.tabs.getSelected(null, function(tab) {
+      // get the microformats from the current tab
+      var activityFeeds = chrome.extension.getBackgroundPage().activityFeeds[tab.id];
+      // iterate feeds
+      for (var i = 0, activity; activity = activityFeeds[i]; i++) {
+        // create new link and list-element
+		    var a = document.createElement("a");
+		    var li = document.createElement("li");
+		    // add link attributes
+		    a.href = activity.href;
+		    a.target = "_blank";
+        
+        var text = "";
+        // check if title is set
+		    if (activity.title != "") {
+		      text = activity.title;
+		    } else {
+		      text = activity.href;
+		    }    
+        // add title
+		    a.appendChild(document.createTextNode(text));
+		    // add list element
+		    document.getElementById("streams").appendChild(li).appendChild(a);
+		  }
+    });
+  </script>
+</head>
+<body>
+  <div id="header">
+    <h1>The following streams were found:</h1>
+  </div>
+  <ul id="streams">
+  </ul>
+</body>
+</html>
