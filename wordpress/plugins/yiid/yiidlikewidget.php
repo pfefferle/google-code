@@ -22,7 +22,7 @@ class YiidItWidget {
   function addLikeButton($content) {
     $widgetCode = '<iframe scrolling="no" frameborder="0" marginwidth="0" marginheight="0" style="overflow: hidden; width: 400px; height: 30px;" src="http://widgets.yiid.com/w/like/full.php?lang=de&type=like&url='.urlencode(get_permalink()).'" allowtransparency="true"></iframe>';
 
-    if (is_page() || is_page()) {
+    if (is_single() || is_page()) {
       return $content . $widgetCode;
     } else {
       return $content;
