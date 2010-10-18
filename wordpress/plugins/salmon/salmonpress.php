@@ -32,9 +32,7 @@ require_once 'salmon.php';
 require_once 'magicsig.php';
 
 error_reporting(E_ALL);
-
-// Dies entspricht error_reporting(E_ALL);
-ini_set('error_reporting', E_ALL);
+ini_set("display_errors", 1);
 
 /**
  * Static class to register callback handlers and otherwise configure
@@ -185,7 +183,8 @@ class SalmonPress {
 
     //TODO(kurrik): Check that this always works, even if always_populate_raw_post_data is Off
     $request_body = @file_get_contents('php://input');
-    $entry = SalmonEntry::from_atom($request_body);
+    $array = MagicSig::parse($request_body);
+    $entry = SalmonEntry::from_atom($array['data']);
 
     // Validate the request if the option is set.
     if (get_option('salmonpress_validate')) {

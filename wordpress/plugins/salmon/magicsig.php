@@ -1,9 +1,12 @@
 <?php
 require_once 'Crypt/RSA.php';
 
-class MagicSig {
-  define( 'MAGIC_SIG_NS', 'http://salmon-protocol.org/ns/magic-env');
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
 
+define( 'MAGIC_SIG_NS', 'http://salmon-protocol.org/ns/magic-env');
+
+class MagicSig {
   function get_public_sig($user_id) {
     if ($sig = get_user_meta($user_id, "magic_sig_public_key")) {
       return $sig[0];
@@ -40,18 +43,18 @@ class MagicSig {
     $mod = MagicSig::base64_url_encode($public_key->modulus->toBytes());
     $exp = MagicSig::base64_url_encode($public_key->exponent->toBytes());
 
-    return 'RSA.' . $mod . '.' . $exp . $private_exp;
+    return 'RSA.' . $mod . '.' . $exp;
   }
 
   function parse($text) {
     $dom = DOMDocument::loadXML($text);
-    return $this->fromDom($dom);
+    return MagicSig::from_dom($dom);
   }
 
   function from_dom($dom) {
-    $env_element = $dom->getElementsByTagNameNS(MagicEnvelope::NS, 'env')->item(0);
+    $env_element = $dom->getElementsByTagNameNS(MAGIC_SIG_NS, 'env')->item(0);
     if (!$env_element) {
-      $env_element = $dom->getElementsByTagNameNS(MagicEnvelope::NS, 'provenance')->item(0);
+      $env_element = $dom->getElementsByTagNameNS(MAGIC_SIG_NS, 'provenance')->item(0);
     }
 
     if (!$env_element) {
