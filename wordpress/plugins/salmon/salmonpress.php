@@ -23,15 +23,18 @@ Author URI: http://roomanna.com
  * limitations under the License.
  */
 
- 
+
 //error_reporting(E_ALL);
 define('SALMONPRESS_VERSION', '0.0.1');
 define('SALMONPRESS_LOG_FILE', '/var/log/salmonpress.log');
 
-
-require_once 'Crypt/RSA.php';
 require_once 'salmon.php';
 require_once 'magicsig.php';
+
+error_reporting(E_ALL);
+
+// Dies entspricht error_reporting(E_ALL);
+ini_set('error_reporting', E_ALL);
 
 /**
  * Static class to register callback handlers and otherwise configure
@@ -56,8 +59,9 @@ class SalmonPress {
     // xrd discovery
     add_action("host_meta_xrd", array("SalmonPress", "add_xrd_discovery_links"));
     add_action('webfinger_xrd', array('SalmonPress', 'add_xrd_discovery_links'), 10, 1);
+    add_action('webfinger_xrd', array('SalmonPress', 'add_xrd_crypt_keys'), 10, 1);
   }
-  
+
   /**
    * show discovery links
    *
@@ -70,61 +74,74 @@ class SalmonPress {
     echo "<Link rel='http://salmon-protocol.org/ns/salmon-mention' href='$url' />\n";
   }
 
+  function add_xrd_crypt_keys($user) {
+    $sig = MagicSig::get_public_sig($user->ID);
+    $encoded = MagicSig::to_string($sig);
+
+    echo '<Link rel="magic-public-key" href="data:application/magic-public-key,'.$encoded.'"/>';
+
+    echo '<Property xmlns:mk="http://salmon-protocol.org/ns/magic-key"
+                    type="http://salmon-protocol.org/ns/magic-key"
+                    mk:key_id="1">
+            '.$encoded.'
+          </Property>';
+  }
+
   /**
    *
    * @return array
    */
   function get_users() {
     global $wpdb;
-    
+
     $sql =  "SELECT * FROM $wpdb->users";
     $users = $wpdb->get_results($wpdb->prepare($sql));
-    
+
     return $users;
   }
-  
+
   function generate_api_url($user = null) {
     $url = get_bloginfo('wpurl');
     $url .= "/?salmonpress=true";
-    
+
     if ($user !== null) {
       $url .= "&amp;author=".$user->ID;
     }
-    
+
     return $url;
   }
-  
+
   /**
-   * Outputs any passed arguments to the log file configured in 
+   * Outputs any passed arguments to the log file configured in
    * SALMONPRESS_LOG_FILE.  Objects are print_r'd into the file.
    * @param mixed ... Any parameters to convert to strings and log.
    */
   public static function debug() {
     $num_args = func_num_args();
     $arg_list = func_get_args();
-    
+
     for ($i = 0; $i < $num_args; $i++) {
       error_log(print_r($arg_list[$i], true) . "\n", 3, SALMONPRESS_LOG_FILE);
     }
   }
-  
+
   /**
    * Prints the link pointing to the salmon endpoint to a syndicated feed.
    */
   public static function print_feed_link() {
     echo "<link rel='salmon' href='".SalmonPress::generate_api_url()."'/>";
   }
-  
-  /** 
-   * Checks a query for the 'salmonpress' parameter and attempts to parse a 
+
+  /**
+   * Checks a query for the 'salmonpress' parameter and attempts to parse a
    * Salmon post if the parameter exists.
    */
   public static function parse_query($wp_query) {
     if (isset($wp_query->query_vars['salmonpress'])) {
       SalmonPress::parse_salmon_post();
     }
-  }  
-  
+  }
+
   /**
    * Adds the 'salmonpress' query variable to wordpress.
    */
@@ -140,20 +157,20 @@ class SalmonPress {
     global $wp_rewrite;
     $wp_rewrite->flush_rules();
   }
-  
+
   /**
-   * Adds a rewrite rule so that http://mysite.com/index.php?salmonpress=true 
+   * Adds a rewrite rule so that http://mysite.com/index.php?salmonpress=true
    * can be rewritten as http://mysite.com/salmonpress
-   */ 
+   */
   public static function add_rewrite_rules($wp_rewrite) {
     global $wp_rewrite;
     $new_rules = array('salmonpress/?(.+)' => 'index.php?salmonpress=' . $wp_rewrite->preg_index(1),
                        'salmonpress' => 'index.php?salmonpress=true');
     $wp_rewrite->rules = $new_rules + $wp_rewrite->rules;
   }
-  
+
   /**
-   * Attempts to parse data sent to the Salmon endpoint and post it as a 
+   * Attempts to parse data sent to the Salmon endpoint and post it as a
    * comment for the current blog.
    */
   public static function parse_salmon_post() {
@@ -165,11 +182,11 @@ class SalmonPress {
       header('Access-Control-Allow-Origin: * ');
       die();
     }
-    
+
     //TODO(kurrik): Check that this always works, even if always_populate_raw_post_data is Off
     $request_body = @file_get_contents('php://input');
     $entry = SalmonEntry::from_atom($request_body);
-    
+
     // Validate the request if the option is set.
     if (get_option('salmonpress_validate')) {
       if ($entry->validate() === false) {
@@ -178,7 +195,7 @@ class SalmonPress {
         die();
       }
     }
-    
+
     $commentdata = $entry->to_commentdata();
     if ($commentdata === false) {
       header('HTTP/1.1 400 Bad Request');
