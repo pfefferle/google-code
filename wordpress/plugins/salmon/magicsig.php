@@ -58,8 +58,8 @@ class MagicSig {
       return false;
     }
 
-    $data_element = $env_element->getElementsByTagNameNS(MagicEnvelope::NS, 'data')->item(0);
-    $sig_element = $env_element->getElementsByTagNameNS(MagicEnvelope::NS, 'sig')->item(0);
+    $data_element = $env_element->getElementsByTagNameNS(MAGIC_SIG_NS, 'data')->item(0);
+    $sig_element = $env_element->getElementsByTagNameNS(MAGIC_SIG_NS, 'sig')->item(0);
     return array(
       'data' => preg_replace('/\s/', '', $data_element->nodeValue),
       'data_type' => $data_element->getAttribute('type'),
