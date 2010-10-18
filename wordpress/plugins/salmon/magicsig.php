@@ -2,6 +2,8 @@
 require_once 'Crypt/RSA.php';
 
 class MagicSig {
+  define( 'MAGIC_SIG_NS', 'http://salmon-protocol.org/ns/magic-env');
+
   function get_public_sig($user_id) {
     if ($sig = get_user_meta($user_id, "magic_sig_public_key")) {
       return $sig[0];
@@ -61,8 +63,8 @@ class MagicSig {
     return array(
       'data' => preg_replace('/\s/', '', $data_element->nodeValue),
       'data_type' => $data_element->getAttribute('type'),
-      'encoding' => $env_element->getElementsByTagNameNS(MagicEnvelope::NS, 'encoding')->item(0)->nodeValue,
-      'alg' => $env_element->getElementsByTagNameNS(MagicEnvelope::NS, 'alg')->item(0)->nodeValue,
+      'encoding' => $env_element->getElementsByTagNameNS(MAGIC_SIG_NS, 'encoding')->item(0)->nodeValue,
+      'alg' => $env_element->getElementsByTagNameNS(MAGIC_SIG_NS, 'alg')->item(0)->nodeValue,
       'sig' => preg_replace('/\s/', '', $sig_element->nodeValue),
     );
   }
