@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hello World</title>
+<script>
+
+function performCommand(event)
+{
+    if (event.command === "show-button") {
+    	showButton(event);
+   	}
+}
+ 
+function validateCommand(event)
+{
+    if (event.command === "show-button") {
+        // Disable the button if there is no URL loaded in the tab.
+        event.target.disabled = !event.target.browserWindow.activeTab.url;
+    }
+}
+
+
+function showButton(event) {
+  if (window.top == window.self) {
+	var activeTab = safari.application.activeBrowserWindow.activeTab.url;
+    var newTab = safari.application.openBrowserWindow().activeTab;
+    newTab.url = "http://spread.ly/?url="+encodeURIComponent(activeTab)+"&resize=true";
+  }
+}
+
+safari.application.addEventListener("command", performCommand, false);
+safari.application.addEventListener("validate", validateCommand, false);
+</script>
+</head>
+<body></body>
+</html>
